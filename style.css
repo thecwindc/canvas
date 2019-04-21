@@ -1,0 +1,82 @@
+*{margin: 0;padding: 0;}
+.icon{
+    width: 1.5em; height: 1.5em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+    padding-right: 20px;
+ }
+body{
+   margin: 0;
+}
+#a{
+    display: block;
+}
+.actions{
+    position: fixed;
+    top:0;
+    left: 0;
+    padding: 20px;
+}
+.actions svg{
+    transition: all 0.3s;
+}
+.actions svg.onclick{
+    fill: red;
+    transform: scale(1.5);
+}
+.swatch{    
+    list-style: none;
+    position: fixed;
+    top: 60px;
+    right: 30px;
+}
+.swatch li{
+    margin: 30px 0;
+    padding: 15px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+ol li.action{
+    margin: 30px 0;
+    padding: 15px;
+    box-shadow: 0 0 5px rgb(82, 82, 82);
+    border-radius: 50%;
+    transform:scale(1.4)
+}
+.red{
+    background: red;
+}
+.yellow{
+    background: yellow;
+}
+.black{
+    background: black;
+}
+.stroke{
+    list-style: none;
+    position: fixed;
+    bottom: 0px;
+}
+.stroke li {
+    display: inline-block;
+    margin: 0 15px;
+}
+.stroke li div{
+    margin: 0 15px;
+}
+.pen1 .pen1{
+    background-color: black;
+    height: 60px;
+    width: 3px;
+}
+.pen2 .pen2{
+    background-color: rgb(168, 168, 168);
+    height: 60px;
+    width: 5px;
+}
+.pen3 .pen3{
+    background-color: rgb(168, 168, 168);
+    height: 60px;
+    width: 10px;
+}

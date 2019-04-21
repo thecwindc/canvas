@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="a"> </canvas>
+    <div id= 'actions' class="actions">
+        <svg id="pen" class="icon onclick"  aria-hidden="true">
+                <use xlink:href="#iconpan"></use>
+        </svg>
+        <svg id="eraser" class="icon" aria-hidden="true">
+                <use xlink:href="#iconeraser"></use>
+        </svg>
+        <svg id="clear" class="icon" aria-hidden="true">
+                <use xlink:href="#iconclear"></use>
+        </svg>
+        <svg id="download" class="icon" aria-hidden="true">
+                <use xlink:href="#icondownload"></use>
+        </svg>
+    </div>
+    <ol class="swatch">
+        <li id="red" class="red"></li>
+        <li id="yellow"class="yellow"></li>
+        <li id="black" class="black"></li>
+    </ol>
+    <ol class="stroke">
+            <li id="pen1" class="pen1"><div class="pen1"></div></li>
+            <li id="pen2"class="pen2"><div class="pen2"></div></li>
+            <li id="pen3" class="pen3"><div class="pen3"></div></li>
+    </ol>
+   
+</body>
+<script>
+   
+    var yyy = document.getElementById('a');
+    var ctx = yyy.getContext('2d');
+    var lineWidth = 2 
+    autoSet(yyy); 
+
+    ctx.rect(0,0,yyy.width,yyy.height);
+    ctx.fillStyle="white";
+    ctx.fill();
+    
+    
+//工具
+    var eraserEnabled = false
+    eraser.onclick = function(){
+        eraserEnabled = true;
+        eraser.classList.add('onclick')
+        pen.classList.remove('onclick')
+        
+    }
+    pen.onclick = function(){
+        eraserEnabled = false;
+        pen.classList.add('onclick')
+        eraser.classList.remove('onclick')
+    }
+    clear.onclick= function(){
+        ctx.clearRect(0, 0, yyy.width, yyy.height);
+    }
+    download.onclick = function(){
+        var url = yyy.toDataURL("image/png")
+        console.log(url)
+        var a = document.createElement('a')
+        a.href = url
+        a.download = '我的画'
+        a.click()
+    }
+
+    //特性检测
+    if(document.body.ontouchstart !== undefined){//说明是触屏设备
+        
+        listenTotouch(yyy)
+    
+
+    }else{//非触屏设备
+        listenToMouse(yyy);
+        }
+    
+ ///把画圆圈封装为huahua
+ function huadian(x,y,radius){
+    ctx.beginPath();
+    ctx.arc(x,y,radius,0,Math.PI*2);
+    ctx.fill();
+    }
+///把画横线封装
+    function draw(x1,y1,x2,y2){
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineWidth = lineWidth;
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+    ctx.closePath();
+}
+///全屏canvas封装
+    function autoSet(yyy){
+        full();
+        window.onresize = function(){  //在用户界面发生变化时运行的函数
+        full();}
+        function full(){
+        var pagewidth = document.documentElement.clientWidth;
+        var pageheight = document.documentElement.clientHeight;
+        yyy.width = pagewidth;
+        yyy.height = pageheight;
+        }
+    }
+
+///监听mouse事件封装
+function listenToMouse(canvas){
+            using = false//表示事件是否在进行
+            //鼠标点击
+            var lastPoint = {x:undefined,y:undefined};//第一个点的坐标
+            canvas.onmousedown = function(a){            
+                var x = a.clientX;//如果body有外边距，xy坐标都减去body的外边距
+                var y = a.clientY;
+                using = true
+                    if(eraserEnabled){               
+                        ctx.clearRect(x,y,10,10)
+                    }else{
+                        lastPoint = { 'x':x,'y':y};
+                        huadian(x,y,1);
+                    }
+                }
+                
+            //鼠标移动
+            canvas.onmousemove = function(a){            
+                var x = a.clientX;
+                var y = a.clientY;
+                if(!using){return}
+                    if(eraserEnabled){
+                        ctx.clearRect(x,y,10,10);//橡皮擦在使用状态时，如果鼠标移动事件进行，就进行clearRect
+                    }else{
+                    var newPoint = {x,y};   
+                    var newPoint = { 'x':x,'y':y};
+                    draw(lastPoint.x, lastPoint.y,newPoint.x,newPoint.y);
+                    lastPoint = newPoint;//将新点（结束点）设置为最后一个点（开始点）
+                } 
+            }
+            //鼠标松开
+            canvas.onmouseup = function(a){
+                using = false;
+                }
+            }
+///////
+///监听touch事件封装
+function listenTotouch(canvas){
+            using = false//表示事件是否在进行
+            //手指点击
+            var lastPoint = {x:undefined,y:undefined};//第一个点的坐标
+            canvas.ontouchstart = function(a){           
+                var x = a.touches[0].clientX;
+                var y = a.touches[0].clientY;
+                using = true
+                    if(eraserEnabled){               
+                        ctx.clearRect(x,y,10,10)
+                    }else{
+                        lastPoint = { 'x':x,'y':y};
+                        huadian(x,y,1);
+                    }
+                }
+                
+            //手指移动
+            canvas.ontouchmove = function(a){            
+                var x = a.touches[0].clientX;
+                var y = a.touches[0].clientY;
+                if(!using){return}
+                    if(eraserEnabled){
+                        ctx.clearRect(x,y,10,10);//橡皮擦在使用状态时，如果鼠标移动事件进行，就进行clearRect
+                    }else{
+                    var newPoint = {x,y};   
+                    var newPoint = { 'x':x,'y':y};
+                    draw(lastPoint.x, lastPoint.y,newPoint.x,newPoint.y);
+                    lastPoint = newPoint;//将新点（结束点）设置为最后一个点（开始点）
+                } 
+            }
+            //手指松开
+            canvas.ontouchend = function(a){
+                using = false;
+                }
+            }
+//画笔变色封装
+    red.onclick = function(){
+        ctx.strokeStyle = 'red'
+        ctx.fillStyle = 'red'
+        red.classList.add('action')
+        yellow.classList.remove('action')
+        black.classList.remove('action')
+
+    }
+    yellow.onclick = function(){
+        ctx.strokeStyle = 'yellow'
+        ctx.fillStyle = 'yellow'
+        yellow.classList.add('action')
+        black.classList.remove('action')
+        red.classList.remove('action') 
+    }
+    black.onclick = function(){
+        ctx.strokeStyle = 'black'
+        ctx.fillStyle = 'black'
+        black.classList.add('action')
+        yellow.classList.remove('action')
+        red.classList.remove('action') 
+    }
+//画笔宽度
+pen1.onclick = function(){
+    lineWidth = 3;
+}
+pen2.onclick = function(){
+    lineWidth = 5;
+}
+pen3.onclick = function(){
+    lineWidth = 10;
+}
+
+
+</script>
+<script src="https://at.alicdn.com/t/font_1153894_9ecqor3v67.js"></script>
+</html>
